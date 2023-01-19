@@ -1,0 +1,82 @@
+using System;
+
+namespace RefactoringGuru.DesignPatterns.Prototype.Conceptual
+{
+    public class Person
+    {
+        public int Age;
+        public DateTime BirthDate;
+        public string Name;
+        public IdInfo IdInfo;
+
+        public Person ShallowCopy()
+        {
+            return (Person)this.MemberwiseClone();
+        }
+
+        // prototype
+        public Person DeepCopy()
+        {
+            Person clone = (Person)this.MemberwiseClone();
+            clone.IdInfo = new IdInfo(IdInfo.IdNumber);
+            clone.Name = String.Copy(Name);
+            return clone;
+        }
+    }
+
+    public class IdInfo
+    {
+        public int IdNumber;
+
+        public IdInfo(int idNumber)
+        {
+            this.IdNumber = idNumber;
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Person p1 = new Person();
+            p1.Age = 21;
+            p1.BirthDate = Convert.ToDateTime("2001-05-30");
+            p1.Name = "Mateo Jijon";
+            p1.IdInfo = new IdInfo(1010);
+
+            //Realice una copia superficial de p1 y asígnela a p2.
+            Person p2 = p1.ShallowCopy();
+            // Haga una copia profunda de p1 y asígnela a p3.
+            Person p3 = p1.DeepCopy();
+
+            // Muestra los valores de p1, p2 y p3.
+            Console.WriteLine("Valores originales de p1, p2, p3:");
+            Console.WriteLine(" valores de instancia p1: ");
+            DisplayValues(p1);
+            Console.WriteLine(" valores de instancia p2:");
+            DisplayValues(p2);
+            Console.WriteLine(" valores de instancia p3:");
+            DisplayValues(p3);
+
+            //  Cambie el valor de las propiedades p1 y muestre los valores de p1, p2 y p3.
+            p1.Age = 25;
+            p1.BirthDate = Convert.ToDateTime("1997-06-07");
+            p1.Name = "Daniel Jijon";
+            p1.IdInfo.IdNumber = 1415;
+            Console.WriteLine("\nValores de p1, p2 y p3 después de cambios a p1:");
+            Console.WriteLine("  valores de instancia p1: ");
+            DisplayValues(p1);
+            Console.WriteLine("   valores de instancia p2 (los valores de referencia han cambiado):");
+            DisplayValues(p2);
+            Console.WriteLine("   valores de instancia p3 (todo se mantuvo igual):");
+            DisplayValues(p3);
+        }
+
+        public static void DisplayValues(Person p)
+        {
+            Console.WriteLine("      Name: {0:s}, Age: {1:d}, BirthDate: {2:MM/dd/yy}",
+                p.Name, p.Age, p.BirthDate);
+            Console.WriteLine("      ID#: {0:d}", p.IdInfo.IdNumber);
+        }
+    }
+}
